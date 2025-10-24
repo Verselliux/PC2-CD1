@@ -39,7 +39,7 @@ model, scaler, label_encoders, dummy_cols = cargar_modelo_y_artefactos()
 st.sidebar.header("🔍 Opciones")
 opcion = st.sidebar.radio(
     "Selecciona una opción:",
-    ["🏠 Inicio", "📈 Exploración de Datos", "🤖 Predicción", "📊 Comparación de Modelos"],
+    ["🏠 Inicio", "📈 Exploración de Datos", "🤖 Predicción"],
     index=0
 )
 
@@ -76,7 +76,10 @@ if opcion == "🏠 Inicio":
 
     - **Modelo usado:** Random Forest 🌳  
     - **Datos de entrenamiento:** *Heart Disease Dataset (UCI)*  
-    - **Desarrollado por:** Guisella 👩‍💻  
+    - **Autores:**
+    - Paniagua, Luis    
+    - Vivanco, Jimena    
+    - Gòmez, Gustavo     
     """)
     st.image("https://cdn-icons-png.flaticon.com/512/3774/3774278.png", width=150)
     st.success("Usa el menú de la izquierda para explorar los datos o realizar una predicción 🤗")
@@ -198,6 +201,9 @@ elif opcion == "🤖 Predicción":
             st.markdown("### 🩺 Resultado de la Predicción")
             if int(pred[0]) == 1:
                 st.error("⚠️ El modelo predice que **EL PACIENTE TIENE RIESGO DE ENFERMEDAD CARDÍACA.**")
+                st.markdown('Para más información, ingresar a la siguiente dirección: '
+                            '<a href="https://medlineplus.gov/spanish/heartdiseases.html" target="_blank">clic aquí</a>',
+                            unsafe_allow_html=True)
             else:
                 st.success("💚 El modelo predice que **EL PACIENTE NO TIENE ENFERMEDAD CARDÍACA.**")
 
@@ -206,56 +212,3 @@ elif opcion == "🤖 Predicción":
 
         except Exception as e:
             st.error(f"Error durante la predicción: {e}")
-
-# --- SECCIÓN COMPARACIÓN DE MODELOS ---
-elif opcion == "📊 Comparación de Modelos":
-    st.header("📊 Comparación de Modelos de Machine Learning")
-
-    st.markdown("""
-    ✨ En esta sección podrás comparar el rendimiento de los modelos aplicados.  
-    Cada modelo fue entrenado y evaluado con el mismo conjunto de datos 💾.  
-    Las métricas más importantes — **Accuracy** y **F1-Score** — te ayudarán a identificar cuál tiene mejor desempeño 🧠.
-    """)
-
-    data_metrics = pd.DataFrame({
-        "Modelo": ["Naive Bayes", "Regresión Logística", "Redes Neuronales", "Random Forest"],
-        "Accuracy": [0.858696, 0.853261, 0.880435, 0.880435],
-        "F1-Score": [0.873786, 0.869565, 0.896226, 0.894231]
-    })
-
-    st.subheader("📋 Resultados obtenidos:")
-    st.dataframe(
-        data_metrics.style.highlight_max(axis=0, color='lightgreen')
-        .set_properties(**{'text-align': 'center'})
-    )
-
-    st.subheader("📊 Comparativa de Accuracy y F1-Score")
-    fig, ax = plt.subplots(figsize=(8,5))
-    width = 0.35
-    x = range(len(data_metrics))
-    ax.bar(x, data_metrics["Accuracy"], width=width, label='Accuracy', alpha=0.7)
-    ax.bar([p + width for p in x], data_metrics["F1-Score"], width=width, label='F1-Score', alpha=0.7)
-    ax.set_xticks([p + width/2 for p in x])
-    ax.set_xticklabels(data_metrics["Modelo"], rotation=20, ha='right')
-    ax.set_ylabel("Valor de la métrica")
-    ax.set_title("🔎 Desempeño comparativo de modelos")
-    ax.legend()
-    st.pyplot(fig)
-
-    st.subheader("📈 Tendencia de rendimiento")
-    fig2, ax2 = plt.subplots(figsize=(8,4))
-    ax2.plot(data_metrics["Modelo"], data_metrics["Accuracy"], marker='o', label='Accuracy', linewidth=2)
-    ax2.plot(data_metrics["Modelo"], data_metrics["F1-Score"], marker='s', label='F1-Score', linewidth=2)
-    ax2.set_ylim(0.8, 1)
-    ax2.set_title("📉 Evolución del rendimiento entre modelos")
-    ax2.set_ylabel("Puntaje")
-    ax2.legend()
-    st.pyplot(fig2)
-
-    st.markdown("""
-    🏆 **Conclusión:**  
-    - Los modelos **Redes Neuronales** y **Random Forest** obtuvieron los mejores resultados 🎯.  
-    - **Naive Bayes** y **Regresión Logística** mostraron un rendimiento ligeramente menor, pero siguen siendo estables y explicables.  
-    - Puedes usar estas métricas como referencia para seleccionar el modelo que implementarás en la interfaz interactiva 🚀.
-    """)
-
